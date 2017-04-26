@@ -1,0 +1,25 @@
+# THIS IS AN EXAMPLE CONFIG FILE! 
+# MAKE REQUIRED CHANGES AND RENAME IT TO config.py
+
+# Flask configuration
+
+SECRET_KEY = ''
+
+# credentials for HTTP Basic auth
+BASIC_AUTH_USERNAME = ''
+BASIC_AUTH_PASSWORD = ''
+
+# enable HTTP Basic auth
+BASIC_AUTH_FORCE = True
+
+# create in-memory database
+DATABASE_FILE = 'db.sqlite'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_FILE
+
+# disable SQLAlchemy from tracing modifications to objects
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# bot configuration
+DEBUG = False
+COMMAND_SYMBOL = '!'
+DISCORD_TOKEN = ''
