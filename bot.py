@@ -35,23 +35,40 @@ async def on_message(message):
 
     if message.content.startswith(config.COMMAND_SYMBOL):
         command, _, args = message.content[1:].partition(' ')
-        await client.send_message(message.channel, {
-            'test': test,
-            'users': list_users,
-        }.get(command, notfound)(args))
+        # command_func points to the function that corresponds to the command
+        command_func, min_permissionlevel, _ = COMMANDS.get(command, (notfound, 0, None))
+        author_permissionlevel = database.User.query.filter(database.User.usernum == authorid)\
+                                 .first().permissions
+        if author_permissionlevel >= min_permissionlevel:
+            await client.send_message(message.channel, command_func(args))
+        else:
+            await client.send_message(message.channel,
+                                      'You do not have enough permissions to use ' + command)
 
 def notfound(_):
     return 'Unknown command'
 
-def test(_):
+def test_command(_):
     return 'Appears to work!'
+
+def help_command(_):
+    msg = '```{:<12} {:<40} {:>20}\n'.format('command', 'function', 'required permissions')
+    for k, v in COMMANDS.items():
+        msg += '{:<12} {:<40} {:>20}\n'.format(k, v[2], v[1])
+    return msg + '```'
 
 def list_users(_):
     users = database.User.query.all()
-    msg = ''
-    for user in users:
-        msg += 'id: {} name: {} usernum: {} permissionlevel: {}\n'.format(
-            user.id, user.name, user.usernum, user.permissions)
-    return msg
+    msg = '```{:<4} {:<30} {:<12} {}\n'.format('id', 'name', 'usernum', 'permissionlevel')
+    for u in users:
+        msg += '{:<4} {:<30} {:<12} {}\n'.format(u.id, u.name, u.usernum, u.permissions)
+    return msg + '```'
+
+COMMANDS = {
+    # command: (function_it_points_to, minimum_permissionlevel, documentation)
+    'test': (test_command, 0, 'Testing command'),
+    'help': (help_command, 0, 'List all commands'),
+    'users': (list_users, 20, 'List all users who are in the database'),
+}
 
 client.run(config.DISCORD_TOKEN)
