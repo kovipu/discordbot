@@ -14,7 +14,7 @@ $ python3 bot.py
 
 ## Available commands:
 | command | function                       |
-| ------- | ------------------------------ |
+----------|---------------------------------
 | test    | testing command                |
 | help    | list available commands        |
 | users   | list all users in the database |
