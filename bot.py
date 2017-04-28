@@ -4,6 +4,7 @@ import discord
 import asyncio
 import os
 from threading import Thread
+from functools import reduce
 
 import app
 import config
@@ -20,6 +21,13 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    async def send(data):
+        """Send text or files the correct way"""
+        try:
+            await client.send_file(message.channel, data)
+        except:
+            await client.send_message(message.channel, data)
+
     author, authorid = str(message.author).split('#')
 
     # if the author of the message is the bot itself do nothing
@@ -50,10 +58,9 @@ async def on_message(message):
 
         # check if the author has enough permissions to use the command
         if author_permissionlevel >= min_permissionlevel:
-            await client.send_message(message.channel, command_func(args))
+            await send(command_func(args))
         else:
-            await client.send_message(message.channel,
-                                      'You do not have enough permissions to use ' + command)
+            await send('You do not have enough permissions to use ' + command)
 
 
 def test_command(_):
@@ -78,11 +85,22 @@ def list_users(_):
     return msg + '```'
 
 
+def list_files(_):
+    """List all files uploaded"""
+    return reduce((lambda a, b: a + ', ' + b), app.list_files())
+
+
+def get_file(filename):
+    """Get a file"""
+    return app.get_file(filename)
+
 COMMANDS = {
-    # command: (function_it_points_to, minimum_permissionlevel)
+    # command: (function_it_points_to, minimum_permissionlevel, return_type)
     'test': (test_command, 0),
     'help': (help_command, 0),
     'users': (list_users, 20),
+    'files': (list_files, 30),
+    'getfile': (get_file, 30),
 }
 
 # start the web app in a seperate thread so it doesn't lock up this one

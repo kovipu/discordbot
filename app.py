@@ -1,8 +1,15 @@
 from flask import Flask
+
 from flask_sqlalchemy import SQLAlchemy
-from flask_basicauth import BasicAuth
-from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+
+from flask_admin.contrib.fileadmin import FileAdmin
+import os.path as op
+from os import makedirs, listdir
+
+from flask_basicauth import BasicAuth
+
+from flask_admin import Admin
 
 
 # create application
@@ -47,5 +54,24 @@ db.create_all()
 # create admin
 admin = Admin(app, name='discordbot', template_mode='bootstrap3')
 
-# add views
+# user database view
 admin.add_view(ModelView(User, db.session))
+
+# add static files view
+path = op.join(op.dirname(__file__), 'static')
+if not op.exists(path):
+    makedirs(path)
+admin.add_view(FileAdmin(path, '/static/', name='Static Files'))
+
+
+def list_files():
+    """List files that have been uploaded from the admin UI"""
+    return listdir(path)
+
+
+def get_file(filename):
+    """Fetch a file that has been uploaded from the admin UI"""
+    try:
+        return open(op.join(path, op.basename(filename)), 'rb')
+    except:
+        return 'File not found'
