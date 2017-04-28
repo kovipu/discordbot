@@ -13,7 +13,7 @@ client = discord.Client()
 
 @client.event
 async def on_ready():
-    print('Connected!')
+    print('Connected to Discord!')
     print('Username: ' + client.user.name)
     print('ID: ' + client.user.id)
 
@@ -85,9 +85,9 @@ COMMANDS = {
     'users': (list_users, 20),
 }
 
-# start the bot
-client.run(config.DISCORD_TOKEN)
-
 # start the web app in a seperate thread so it doesn't lock up this one
 thread = Thread(target=app.app.run)
 thread.start()
+
+# start the bot
+client.run(config.DISCORD_TOKEN)
