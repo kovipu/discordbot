@@ -4,12 +4,19 @@ from flask_basicauth import BasicAuth
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
+
+# create application
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+
+# create database
 db = SQLAlchemy(app)
 
+# enable basic authentication
 basic_auth = BasicAuth(app)
 
+
+# create models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -27,15 +34,18 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
-admin = Admin(app, name='discordbot', template_mode='bootstrap3')
-admin.add_view(ModelView(User, db.session))
 
-db.create_all()
-
-# Flask views
+# add a link to the admin panel to the index page
 @app.route('/')
 def index():
     return '<a href="/admin/">Click me to get to Admin!</a>'
 
-def run():
-    app.run()
+
+# build the database
+db.create_all()
+
+# create admin
+admin = Admin(app, name='discordbot', template_mode='bootstrap3')
+
+# add views
+admin.add_view(ModelView(User, db.session))
