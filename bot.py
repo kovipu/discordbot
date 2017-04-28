@@ -5,7 +5,7 @@ import asyncio
 import os
 from threading import Thread
 
-import database
+import app
 import config
 
 client = discord.Client()
@@ -16,11 +16,6 @@ async def on_ready():
     print('Connected!')
     print('Username: ' + client.user.name)
     print('ID: ' + client.user.id)
-    print('------')
-
-    # start the web app in a seperate thread so it doesn't lock up this one
-    thread = Thread(target=database.app.run)
-    thread.start()
 
 
 @client.event
@@ -32,10 +27,10 @@ async def on_message(message):
         return
 
     # add the author to the database if they're not already there
-    users = database.User.query.all()
+    users = app.User.query.all()
     if int(authorid) not in [user.usernum for user in users]:
-        database.db.session.add(database.User(author, authorid))
-        database.db.session.commit()
+        app.db.session.add(app.User(author, authorid))
+        app.db.session.commit()
         print('Added {} to the database'.format(author))
 
     # run a command if one is issued in the message
@@ -50,7 +45,7 @@ async def on_message(message):
             (lambda _: 'Command not found', 0))
 
         # fetch the author's permission level from the database
-        author_permissionlevel = database.User.query.filter(database.User.usernum == authorid)\
+        author_permissionlevel = app.User.query.filter(app.User.usernum == authorid)\
                                  .first().permissions
 
         # check if the author has enough permissions to use the command
@@ -76,7 +71,7 @@ def help_command(_):
 
 def list_users(_):
     """List all users in the database"""
-    users = database.User.query.all()
+    users = app.User.query.all()
     msg = '```{:<4} {:<30} {:<12} {}\n'.format('id', 'name', 'usernum', 'permissionlevel')
     for u in users:
         msg += '{:<4} {:<30} {:<12} {}\n'.format(u.id, u.name, u.usernum, u.permissions)
@@ -90,4 +85,9 @@ COMMANDS = {
     'users': (list_users, 20),
 }
 
+# start the bot
 client.run(config.DISCORD_TOKEN)
+
+# start the web app in a seperate thread so it doesn't lock up this one
+thread = Thread(target=app.app.run)
+thread.start()
