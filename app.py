@@ -1,16 +1,22 @@
-from flask import Flask
+#!/usr/bin/env python3
 
-from flask_sqlalchemy import SQLAlchemy
-from flask_admin.contrib.sqla import ModelView
-
-from flask_admin.contrib.fileadmin import FileAdmin
+from threading import Thread
+from getpass import getuser
 import os.path as op
 from os import makedirs, listdir
 
+from flask import Flask
+from flask_admin import Admin
+from flask_admin.contrib.fileadmin import FileAdmin
+from flask_admin.contrib.sqla import ModelView
+from flask_sqlalchemy import SQLAlchemy
 from flask_basicauth import BasicAuth
 
-from flask_admin import Admin
+import bot
 
+# start the bot in a seperate thread
+thread = Thread(target=bot.run)
+thread.start()
 
 # create application
 app = Flask(__name__)
@@ -58,10 +64,15 @@ admin = Admin(app, name='discordbot', template_mode='bootstrap3')
 admin.add_view(ModelView(User, db.session))
 
 # add static files view
-path = op.join(op.dirname(__file__), 'static')
+if getuser() == 'www-data':
+    path = op.join(op.sep, 'srv', 'discordbot')
+else:
+    path = op.join(op.dirname(__file__), 'static')
+
 if not op.exists(path):
     makedirs(path)
-admin.add_view(FileAdmin(path, '/static/', name='Static Files'))
+
+admin.add_view(FileAdmin(path, name='Static Files'))
 
 
 def list_files():
@@ -75,3 +86,7 @@ def get_file(filename):
         return open(op.join(path, op.basename(filename)), 'rb')
     except:
         return 'File not found'
+
+
+if __name__ == '__main__':
+    app.run()

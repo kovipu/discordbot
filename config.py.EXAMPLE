@@ -13,13 +13,13 @@ BASIC_AUTH_PASSWORD = ''
 BASIC_AUTH_FORCE = True
 
 # create in-memory database
-DATABASE_FILE = 'db.sqlite'
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE_FILE
+DATABASE_FILE = 'discordbot.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/discordbot/' + DATABASE_FILE
 
 # disable SQLAlchemy from tracing modifications to objects
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # bot configuration
 DEBUG = False
-COMMAND_SYMBOL = '!'
+COMMAND_SYMBOL = '?'
 DISCORD_TOKEN = ''

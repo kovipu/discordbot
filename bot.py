@@ -1,15 +1,19 @@
-#!/usr/bin/env python3
-
-import discord
 import asyncio
 import os
-from threading import Thread
 from functools import reduce
 
-import app
+import discord
+
 import config
+import app
 
 client = discord.Client()
+
+
+def run():
+    """Run the bot"""
+    print("Hello?")
+    client.run(config.DISCORD_TOKEN)
 
 
 @client.event
@@ -63,6 +67,10 @@ async def on_message(message):
             await send('You do not have enough permissions to use ' + command)
 
 
+# these are the functions corresponding to the bot's commands
+# they all require one parameter so I'm using _ here as a throwaway one
+
+
 def test_command(_):
     """Test if the bot is responding"""
     return 'Appears to work!'
@@ -94,18 +102,12 @@ def get_file(filename):
     """Get a file"""
     return app.get_file(filename)
 
+
 COMMANDS = {
-    # command: (function_it_points_to, minimum_permissionlevel, return_type)
+    # command: (function_it_points_to, minimum_permissionlevel)
     'test': (test_command, 0),
     'help': (help_command, 0),
     'users': (list_users, 20),
     'files': (list_files, 30),
     'getfile': (get_file, 30),
 }
-
-# start the web app in a seperate thread so it doesn't lock up this one
-thread = Thread(target=app.app.run)
-thread.start()
-
-# start the bot
-client.run(config.DISCORD_TOKEN)
