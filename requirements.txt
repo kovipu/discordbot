@@ -1,0 +1,5 @@
+discord.py
+flask
+flask_admin
+flask_sqlalchemy
+flask_basicauth
