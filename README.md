@@ -50,3 +50,4 @@ Now symlink the file to sites-enabled:
 ```
 # ln -s /etc/nginx/sites-available/discordbot /etc/nginx/sites-enabled/discordbot
 ```
+You may have to restart Nginx at this point.
