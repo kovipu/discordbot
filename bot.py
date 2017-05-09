@@ -32,7 +32,7 @@ async def on_message(message):
         except:
             # split the data to multiple messages if it's too long
             if data.startswith('```'):
-                data, md = data[3:-3], '```'
+                data, md = data.replace('```', ''), '```'
             else:
                 md = ''
             m = data.splitlines()
