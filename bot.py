@@ -30,7 +30,14 @@ async def on_message(message):
         try:
             await client.send_file(message.channel, data)
         except:
-            await client.send_message(message.channel, data)
+            # split the data to multiple messages if it's too long
+            if data.startswith('```'):
+                data, md = data[3:-3], '```'
+            else:
+                md = ''
+            m = data.splitlines()
+            for i in range(0, len(m), 30):
+                await client.send_message(message.channel, md + '\n'.join(m[i:i+30]) + md)
 
     author, authorid = str(message.author).split('#')
 
