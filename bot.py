@@ -102,7 +102,7 @@ def list_users(_):
 
 def list_files(_):
     """List all files uploaded"""
-    return reduce((lambda a, b: a + ', ' + b), app.list_files())
+    return ', '.join(app.list_files())
 
 
 def get_file(filename):
