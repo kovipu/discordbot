@@ -1,6 +1,5 @@
 import asyncio
 import os
-from functools import reduce
 
 import discord
 
@@ -12,7 +11,6 @@ client = discord.Client()
 
 def run():
     """Run the bot"""
-    print("Hello?")
     client.run(config.DISCORD_TOKEN)
 
 
@@ -61,7 +59,7 @@ async def on_message(message):
         command_func, min_permissionlevel = COMMANDS.get(
             command,
             # if the command is not found in COMMANDS
-            (lambda _: 'Command not found', 0))
+            (lambda _: '', 0))
 
         # fetch the author's permission level from the database
         author_permissionlevel = app.User.query.filter(app.User.usernum == authorid)\
