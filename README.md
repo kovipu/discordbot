@@ -25,7 +25,7 @@ This makes the webapp run on the root level of your webserver.
 
 If you didn't install uWSGI thru pip, add `plugin --python3` to the last command.
 
-Now uWSGI is running in an unix socket. You'll want to use Nginx to server your app via HTTP on an actual socket.
+Now uWSGI is running in an unix socket. You'll want to use Nginx to serve your app via HTTP on an actual socket.
 Something like this in `/etc/nginx/sites-available/discordbot` should do the trick on Debian:
 ```
 server {
